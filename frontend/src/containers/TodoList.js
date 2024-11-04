@@ -26,6 +26,7 @@ const TodoList = ({ list, handleOnChange }) => {
                         <Checkbox
                             icon={<RadioButtonUncheckedIcon />}
                             checkedIcon={<CheckCircleOutlineIcon />}
+                            checked={item.completed}
                             onChange={() => handleOnChange(index)}
                         />
                     </Box>
