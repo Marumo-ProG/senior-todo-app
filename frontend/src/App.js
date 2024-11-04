@@ -44,6 +44,7 @@ function App() {
             return newList;
         });
     };
+
     return (
         <Stack height={"100vh"} alignItems={"center"}>
             <Box
@@ -110,9 +111,8 @@ function App() {
                                 }}
                             />
                         </Stack>
-                        <Stack sx={{ backgroundColor: "white", padding: 2, borderRadius: 4 }}>
-                            <TodoList list={list} handleOnChange={handleOnChange} />
-                        </Stack>
+
+                        <TodoList list={list} handleOnChange={handleOnChange} />
                     </Stack>
                 </Stack>
             </Box>
