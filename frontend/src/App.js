@@ -114,6 +114,12 @@ function App() {
 
                         <TodoList list={list} handleOnChange={handleOnChange} />
                     </Stack>
+                    <Typography
+                        variant={"body"}
+                        sx={{ color: "#9495A5", textAlign: "center", fontFamily: "Josefin Sans" }}
+                    >
+                        Drag and drop to reorder list
+                    </Typography>
                 </Stack>
             </Box>
         </Stack>
