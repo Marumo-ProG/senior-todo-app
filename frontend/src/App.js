@@ -35,6 +35,8 @@ function App() {
         { title: "Task 2", completed: true },
         { title: "Task 3", completed: false },
     ]);
+    const [inputTask, setInputTask] = useState({ title: "", completed: false });
+
     const handleSetTheme = () => {
         setTheme(theme === "light" ? "dark" : "light");
     };
@@ -45,6 +47,14 @@ function App() {
             newList[index].completed = !newList[index].completed;
             return newList;
         });
+    };
+    const handleAddTask = (event) => {
+        if (event.key !== "Enter") return;
+        setList((prevList) => [...prevList, inputTask]);
+        setInputTask({ title: "", completed: false });
+    };
+    const handleClearCompleted = () => {
+        setList((prevList) => prevList.filter((item) => !item.completed));
     };
 
     return (
@@ -112,10 +122,16 @@ function App() {
                                             />
                                         }
                                         checkedIcon={<CheckCircleOutlineIcon />}
+                                        checked={inputTask.completed}
                                     />
                                 </Box>
                                 <TextField
                                     placeholder="Add a task..."
+                                    onKeyDown={handleAddTask}
+                                    value={inputTask.title}
+                                    onChange={(e) =>
+                                        setInputTask({ title: e.target.value, completed: false })
+                                    }
                                     sx={{
                                         flexGrow: 1,
                                         "& input": {
@@ -130,7 +146,12 @@ function App() {
                             </Stack>
                         </Paper>
 
-                        <TodoList list={list} handleOnChange={handleOnChange} theme={theme} />
+                        <TodoList
+                            list={list}
+                            handleOnChange={handleOnChange}
+                            theme={theme}
+                            handleClearCompleted={handleClearCompleted}
+                        />
                     </Stack>
                     <Typography
                         variant={"body"}
