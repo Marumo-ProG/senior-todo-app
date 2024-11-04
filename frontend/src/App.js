@@ -12,12 +12,14 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
 
 // Containers
 import TodoList from "./containers/TodoList";
 
 // Images
 import DefaultbackgroundImage from "./assets/images/default_background.jpg";
+import DarkBackground from "./assets/images/darkmode_background.jpg";
 
 // Icons
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -46,7 +48,11 @@ function App() {
     };
 
     return (
-        <Stack height={"100vh"} alignItems={"center"}>
+        <Stack
+            height={"100vh"}
+            alignItems={"center"}
+            sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}
+        >
             <Box
                 sx={{
                     display: "grid",
@@ -59,7 +65,7 @@ function App() {
             >
                 <CardMedia
                     component="img"
-                    image={DefaultbackgroundImage}
+                    image={theme === "light" ? DefaultbackgroundImage : DarkBackground}
                     alt="Default background"
                     sx={{ width: "100%", height: "auto", gridRow: "1/3", gridColumn: "1/2" }}
                 />
@@ -87,32 +93,44 @@ function App() {
                         </IconButton>
                     </Stack>
                     <Stack spacing={3}>
-                        <Stack
-                            height={64}
-                            backgroundColor={"white"}
-                            borderRadius={4}
-                            padding={2}
-                            alignItems={"center"}
-                            direction={"row"}
-                        >
-                            <Box display={"flex"} alignItems={"center"}>
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedIcon />}
-                                    checkedIcon={<CheckCircleOutlineIcon />}
-                                />
-                            </Box>
-                            <TextField
-                                placeholder="Add a task..."
-                                sx={{
-                                    flexGrow: 1,
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                        border: "none",
-                                    },
-                                }}
-                            />
-                        </Stack>
+                        <Paper elevation={4} sx={{ overflow: "hidden" }}>
+                            <Stack
+                                backgroundColor={theme === "light" ? "white" : "#25273D"}
+                                // borderRadius={4}
+                                padding={1}
+                                alignItems={"center"}
+                                direction={"row"}
+                            >
+                                <Box display={"flex"} alignItems={"center"}>
+                                    <Checkbox
+                                        icon={
+                                            <RadioButtonUncheckedIcon
+                                                sx={{
+                                                    color:
+                                                        theme === "light" ? "#E3E4F1" : "#393A4B",
+                                                }}
+                                            />
+                                        }
+                                        checkedIcon={<CheckCircleOutlineIcon />}
+                                    />
+                                </Box>
+                                <TextField
+                                    placeholder="Add a task..."
+                                    sx={{
+                                        flexGrow: 1,
+                                        "& input": {
+                                            color: theme === "light" ? "#9495A5" : "#767992",
+                                        },
 
-                        <TodoList list={list} handleOnChange={handleOnChange} />
+                                        "& .MuiOutlinedInput-notchedOutline": {
+                                            border: "none",
+                                        },
+                                    }}
+                                />
+                            </Stack>
+                        </Paper>
+
+                        <TodoList list={list} handleOnChange={handleOnChange} theme={theme} />
                     </Stack>
                     <Typography
                         variant={"body"}

@@ -1,7 +1,6 @@
 // MUI
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 
@@ -12,14 +11,19 @@ import Typography from "../components/Typography";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
-const TodoList = ({ list, handleOnChange }) => {
+const TodoList = ({ list, handleOnChange, theme }) => {
     const handleDisplayAll = () => {};
     const handleDisplayActive = () => {};
     const handleDisplayCompleted = () => {};
     const handleClearCompleted = () => {};
     return (
-        <Paper width={"100%"} maxWidth={"540px"} elevation={4} sx={{ padding: 0 }}>
-            <Stack spacing={2}>
+        <Paper
+            width={"100%"}
+            maxWidth={"540px"}
+            elevation={4}
+            sx={{ padding: 0, overflow: "hidden" }}
+        >
+            <Stack spacing={2} sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}>
                 {list.map((item, index) => (
                     <Stack
                         padding={2}
@@ -30,7 +34,13 @@ const TodoList = ({ list, handleOnChange }) => {
                     >
                         <Box display={"flex"} alignItems={"center"}>
                             <Checkbox
-                                icon={<RadioButtonUncheckedIcon />}
+                                icon={
+                                    <RadioButtonUncheckedIcon
+                                        sx={{
+                                            color: theme === "light" ? "#E3E4F1" : "#393A4B",
+                                        }}
+                                    />
+                                }
                                 checkedIcon={<CheckCircleOutlineIcon />}
                                 checked={item.completed}
                                 onChange={() => handleOnChange(index)}
@@ -41,9 +51,14 @@ const TodoList = ({ list, handleOnChange }) => {
                             variant={"body"}
                             sx={{
                                 textDecoration: item.completed ? "line-through" : "none",
-                                color: item.completed ? "gray" : "black",
                                 fontFamily: "Josefin Sans",
                                 fontSize: 18,
+                                color:
+                                    item.completed && theme === "dark"
+                                        ? "#4D5067"
+                                        : theme === "light"
+                                        ? "#9495A5"
+                                        : "#767992",
                             }}
                         >
                             {item.title}
