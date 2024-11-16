@@ -26,6 +26,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 function App() {
     const { theme, setTheme } = useContext(ThemeContext);
@@ -73,6 +74,48 @@ function App() {
                     gridTemplateRows: "70px auto auto",
                 }}
             >
+                <Stack
+                    sx={{
+                        gridRow: "1/2",
+                        gridColumn: "1/2",
+                        justifySelf: "end",
+                        alignSelf: "center",
+                        height: "fit-content",
+                        px: 3,
+                        width: "100%",
+                    }}
+                    direction="row"
+                    spacing={3}
+                    justifyContent={"space-between"}
+                    boxSizing={"border-box"}
+                >
+                    <Button
+                        startIcon={<UploadFileIcon />}
+                        variant="contained"
+                        sx={{
+                            background: "white",
+                            color: "blue",
+                        }}
+                    >
+                        Change Background image
+                    </Button>
+                    <Stack direction="row" spacing={3} alignItems={"center"}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            sx={{ textTransform: "none" }}
+                        >
+                            Login
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ textTransform: "none", backgroundColor: "white", color: "black" }}
+                        >
+                            Signup
+                        </Button>
+                    </Stack>
+                </Stack>
+
                 <CardMedia
                     component="img"
                     image={theme === "light" ? DefaultbackgroundImage : DarkBackground}
@@ -106,7 +149,6 @@ function App() {
                         <Paper elevation={4} sx={{ overflow: "hidden" }}>
                             <Stack
                                 backgroundColor={theme === "light" ? "white" : "#25273D"}
-                                // borderRadius={4}
                                 padding={1}
                                 alignItems={"center"}
                                 direction={"row"}
