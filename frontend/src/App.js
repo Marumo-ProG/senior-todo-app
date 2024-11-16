@@ -71,7 +71,7 @@ function App() {
                     width: "100%",
                     justifyContent: "center",
                     gridTemplateColumns: "auto",
-                    gridTemplateRows: "70px auto auto",
+                    gridTemplateRows: { xs: "auto auto auto", md: "70px auto auto" },
                 }}
             >
                 <Stack
@@ -81,10 +81,10 @@ function App() {
                         justifySelf: "end",
                         alignSelf: "center",
                         height: "fit-content",
-                        px: 3,
+                        p: 4,
                         width: "100%",
                     }}
-                    direction="row"
+                    direction={{ xs: "column-reverse", sm: "row" }}
                     spacing={3}
                     justifyContent={"space-between"}
                     boxSizing={"border-box"}
@@ -120,7 +120,13 @@ function App() {
                     component="img"
                     image={theme === "light" ? DefaultbackgroundImage : DarkBackground}
                     alt="Default background"
-                    sx={{ width: "100%", height: "auto", gridRow: "1/3", gridColumn: "1/2" }}
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        gridRow: "1/3",
+                        gridColumn: "1/2",
+                        objectFit: "cover",
+                    }}
                 />
                 <Stack
                     spacing={5}
