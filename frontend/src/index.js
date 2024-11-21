@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { ThemeProvider } from "./common/context/ThemeProvider";
+import { AuthProvider } from "./common/context/AuthContext";
 
 // Supports weights 100-700
 import "@fontsource-variable/josefin-sans";
@@ -13,9 +14,11 @@ import "./index.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        <ThemeProvider>
-            <App />
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider>
+                <App />
+            </ThemeProvider>
+        </AuthProvider>
     </React.StrictMode>
 );
 
