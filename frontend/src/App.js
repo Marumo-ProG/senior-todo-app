@@ -4,7 +4,6 @@ import { useContext, useState } from "react";
 import { ThemeContext } from "./common/context/ThemeProvider";
 
 // services
-import { signup, login } from "./common/services/user.service";
 
 // MUI
 import Stack from "@mui/material/Stack";
@@ -61,14 +60,6 @@ function App() {
         setList((prevList) => prevList.filter((item) => !item.completed));
     };
 
-    const handleSignup = async () => {
-        await signup({
-            username: "test",
-            password: "testingpassword123",
-            email: "lennythobejane@gmail.com",
-        });
-    };
-
     return (
         <Stack
             height={"100vh"}
@@ -121,7 +112,7 @@ function App() {
                         <Button
                             variant="contained"
                             sx={{ textTransform: "none", backgroundColor: "white", color: "black" }}
-                            onClick={handleSignup}
+                            onClick={() => console.log("Signup")}
                         >
                             Signup
                         </Button>
