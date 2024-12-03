@@ -8,6 +8,20 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/UserModel");
 
+// token generation function
+const generateToken = (user) => {
+    return jwt.sign(
+        {
+            username: user.username,
+            email: user.email,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "1h",
+        }
+    );
+};
+
 // User creation
 UserRouter.post("/create", async (req, res) => {
     try {
@@ -24,16 +38,7 @@ UserRouter.post("/create", async (req, res) => {
         newUser.password = await bcrypt.hash(newUser.password, salt);
 
         // generating a jwt
-        const token = jwt.sign(
-            {
-                username: newUser.username,
-                email: newUser.email,
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: "1h",
-            }
-        );
+        const token = generateToken(newUser);
 
         const user = await newUser.save();
         res.status(201).json({ user, token });
@@ -51,9 +56,17 @@ UserRouter.post("/login", async (req, res) => {
 
         !user && res.status(404).json("user not found");
 
-        user.password !== req.body.password && res.status(401).json("wrong password");
+        // user.password !== req.body.password && res.status(401).json("wrong password");
 
-        res.status(200).json(user);
+        // comparing the password with the hashed password
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+
+        !validPassword && res.status(401).json("wrong password");
+
+        // generating a jwt
+        const token = generateToken(user);
+
+        res.status(200).json({ user, token });
     } catch (err) {
         res.status(500).json(err);
     }
