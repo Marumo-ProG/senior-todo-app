@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // setting up the port
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3033;
 
 // setting up the routes
 app.use("/api/v1/user", UserRouter);
