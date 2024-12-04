@@ -3,6 +3,9 @@ import { useContext, useState } from "react";
 // Context
 import { ThemeContext } from "./common/context/ThemeProvider";
 
+// Auth
+import { useAuth } from "./common/context/AuthContext";
+
 // MUI
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -31,6 +34,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 function App() {
+    const { user } = useAuth();
     const { theme, setTheme } = useContext(ThemeContext);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openSignupModal, setOpenSignupModal] = useState(false);
@@ -107,27 +111,42 @@ function App() {
                         >
                             Change Background image
                         </Button>
-                        <Stack direction="row" spacing={3} alignItems={"center"}>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                sx={{ textTransform: "none" }}
-                                onClick={() => setOpenLoginModal(true)}
-                            >
-                                Login
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    textTransform: "none",
-                                    backgroundColor: "white",
-                                    color: "black",
-                                }}
-                                onClick={() => setOpenSignupModal(true)}
-                            >
-                                Signup
-                            </Button>
-                        </Stack>
+                        {user === null ? (
+                            <Stack direction="row" spacing={3} alignItems={"center"}>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    sx={{ textTransform: "none" }}
+                                    onClick={() => setOpenLoginModal(true)}
+                                >
+                                    Login
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        textTransform: "none",
+                                        backgroundColor: "white",
+                                        color: "black",
+                                    }}
+                                    onClick={() => setOpenSignupModal(true)}
+                                >
+                                    Signup
+                                </Button>
+                            </Stack>
+                        ) : (
+                            <Stack direction="row" spacing={3} alignItems="center" zIndex={1}>
+                                <Typography variant="h5" sx={{ color: "white" }}>
+                                    Welcome, {user.username}
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    sx={{ textTransform: "none" }}
+                                >
+                                    Logout
+                                </Button>
+                            </Stack>
+                        )}
                     </Stack>
 
                     <CardMedia

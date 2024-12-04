@@ -1,3 +1,8 @@
+import { useState } from "react";
+
+// Auth
+import { useAuth } from "../common/context/AuthContext";
+
 // MUI
 import Dialog from "@mui/material/Dialog";
 import Stack from "@mui/material/Stack";
@@ -8,11 +13,21 @@ import Typography from "@mui/material/Typography";
 // React Hook forms
 import { useForm, Controller } from "react-hook-form";
 
-const LoginModal = ({ open, handleClose }) => {
-    const { control, handleSubmit } = useForm();
+// circular progress
+import CircularProgress from "@mui/material/CircularProgress";
 
-    const handleLogin = (data) => {
-        console.log(data);
+const LoginModal = ({ open, handleClose }) => {
+    const { login, loading } = useAuth();
+    const { control, handleSubmit } = useForm();
+    const [error, setError] = useState(null);
+
+    const handleLogin = async (data) => {
+        const status = await login(data);
+        if (status === 200) {
+            handleClose();
+        } else {
+            setError("Invalid email or password");
+        }
     };
     return (
         <Dialog
@@ -31,6 +46,12 @@ const LoginModal = ({ open, handleClose }) => {
                     <Typography variant="h4" sx={{ textAlign: "center" }}>
                         Login
                     </Typography>
+
+                    {error && (
+                        <Typography variant="body" sx={{ color: "red" }}>
+                            {error}
+                        </Typography>
+                    )}
 
                     <Stack spacing={2}>
                         <Controller
@@ -70,7 +91,11 @@ const LoginModal = ({ open, handleClose }) => {
                         <Button variant="contained" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Button variant="contained" type="submit">
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            endIcon={loading ? <CircularProgress size={20} /> : null}
+                        >
                             Login
                         </Button>
                     </Stack>

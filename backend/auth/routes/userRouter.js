@@ -54,21 +54,23 @@ UserRouter.post("/login", async (req, res) => {
             email: req.body.email,
         });
 
-        !user && res.status(404).json("user not found");
+        if (!user) {
+            return res.status(404).json("User not found");
+        }
 
         // user.password !== req.body.password && res.status(401).json("wrong password");
 
         // comparing the password with the hashed password
         const validPassword = await bcrypt.compare(req.body.password, user.password);
 
-        !validPassword && res.status(401).json("wrong password");
-
-        // generating a jwt
-        const token = generateToken(user);
-
-        res.status(200).json({ user, token });
+        if (validPassword) {
+            const token = generateToken(user);
+            return res.status(200).json({ user, token }).end();
+        } else {
+            return res.status(401).json("wrong password").end();
+        }
     } catch (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
     }
 });
 
