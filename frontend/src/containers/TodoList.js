@@ -53,47 +53,59 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted }) => {
                 sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}
             >
                 <Stack>
-                    {viewedList.map((item, index) => (
-                        <Stack
-                            padding={2}
-                            direction={"row"}
-                            alignItems={"center"}
-                            key={index}
-                            sx={{ borderBottom: "1px #979797 solid" }}
-                        >
-                            <Box display={"flex"} alignItems={"center"}>
-                                <Checkbox
-                                    icon={
-                                        <RadioButtonUncheckedIcon
-                                            sx={{
-                                                color: theme === "light" ? "#E3E4F1" : "#393A4B",
-                                            }}
-                                        />
-                                    }
-                                    checkedIcon={<CheckCircleOutlineIcon />}
-                                    checked={item.completed}
-                                    onChange={() => handleOnChange(index)}
-                                />
-                            </Box>
+                    {viewedList.length > 0 ? (
+                        viewedList.map((item, index) => (
+                            <Stack
+                                padding={2}
+                                direction={"row"}
+                                alignItems={"center"}
+                                key={index}
+                                sx={{ borderBottom: "1px #979797 solid" }}
+                            >
+                                <Box display={"flex"} alignItems={"center"}>
+                                    <Checkbox
+                                        icon={
+                                            <RadioButtonUncheckedIcon
+                                                sx={{
+                                                    color:
+                                                        theme === "light" ? "#E3E4F1" : "#393A4B",
+                                                }}
+                                            />
+                                        }
+                                        checkedIcon={<CheckCircleOutlineIcon />}
+                                        checked={item.completed}
+                                        onChange={() => handleOnChange(index)}
+                                    />
+                                </Box>
 
+                                <Typography
+                                    variant={"body"}
+                                    sx={{
+                                        textDecoration: item.completed ? "line-through" : "none",
+                                        fontFamily: "Josefin Sans",
+                                        fontSize: 18,
+                                        color:
+                                            item.completed && theme === "dark"
+                                                ? "#4D5067"
+                                                : theme === "light"
+                                                ? "#9495A5"
+                                                : "#767992",
+                                    }}
+                                >
+                                    {item.title}
+                                </Typography>
+                            </Stack>
+                        ))
+                    ) : (
+                        <Stack padding={2}>
                             <Typography
                                 variant={"body"}
-                                sx={{
-                                    textDecoration: item.completed ? "line-through" : "none",
-                                    fontFamily: "Josefin Sans",
-                                    fontSize: 18,
-                                    color:
-                                        item.completed && theme === "dark"
-                                            ? "#4D5067"
-                                            : theme === "light"
-                                            ? "#9495A5"
-                                            : "#767992",
-                                }}
+                                sx={{ fontSize: 14, color: "#9495A5", textAlign: "center" }}
                             >
-                                {item.title}
+                                No items
                             </Typography>
                         </Stack>
-                    ))}
+                    )}
                 </Stack>
                 <Stack
                     direction="row"
