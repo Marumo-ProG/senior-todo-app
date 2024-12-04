@@ -17,6 +17,7 @@ import Paper from "@mui/material/Paper";
 // Containers
 import TodoList from "./containers/TodoList";
 import LoginModal from "./components/LoginModal";
+import SignupModal from "./components/SignupModal";
 
 // Images
 import DefaultbackgroundImage from "./assets/images/default_background.jpg";
@@ -32,6 +33,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 function App() {
     const { theme, setTheme } = useContext(ThemeContext);
     const [openLoginModal, setOpenLoginModal] = useState(false);
+    const [openSignupModal, setOpenSignupModal] = useState(false);
 
     const [list, setList] = useState([
         { title: "Task 1", completed: false },
@@ -74,7 +76,10 @@ function App() {
                         width: "100%",
                         justifyContent: "center",
                         gridTemplateColumns: "auto",
-                        gridTemplateRows: { xs: "auto auto auto", md: "70px auto auto" },
+                        gridTemplateRows: {
+                            xs: "auto auto auto",
+                            md: "70px minmax(200px,435px) auto",
+                        },
                     }}
                 >
                     <Stack
@@ -118,6 +123,7 @@ function App() {
                                     backgroundColor: "white",
                                     color: "black",
                                 }}
+                                onClick={() => setOpenSignupModal(true)}
                             >
                                 Signup
                             </Button>
@@ -228,6 +234,7 @@ function App() {
                 </Box>
             </Stack>
             <LoginModal open={openLoginModal} handleClose={() => setOpenLoginModal(false)} />
+            <SignupModal open={openSignupModal} handleClose={() => setOpenSignupModal(false)} />
         </>
     );
 }

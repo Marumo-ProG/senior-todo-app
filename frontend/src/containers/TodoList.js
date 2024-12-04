@@ -46,51 +46,58 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted }) => {
             elevation={4}
             sx={{ padding: 0, overflow: "hidden" }}
         >
-            <Stack spacing={2} sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}>
-                {viewedList.map((item, index) => (
-                    <Stack
-                        padding={2}
-                        direction={"row"}
-                        alignItems={"center"}
-                        key={index}
-                        sx={{ borderBottom: "1px #979797 solid" }}
-                    >
-                        <Box display={"flex"} alignItems={"center"}>
-                            <Checkbox
-                                icon={
-                                    <RadioButtonUncheckedIcon
-                                        sx={{
-                                            color: theme === "light" ? "#E3E4F1" : "#393A4B",
-                                        }}
-                                    />
-                                }
-                                checkedIcon={<CheckCircleOutlineIcon />}
-                                checked={item.completed}
-                                onChange={() => handleOnChange(index)}
-                            />
-                        </Box>
-
-                        <Typography
-                            variant={"body"}
-                            sx={{
-                                textDecoration: item.completed ? "line-through" : "none",
-                                fontFamily: "Josefin Sans",
-                                fontSize: 18,
-                                color:
-                                    item.completed && theme === "dark"
-                                        ? "#4D5067"
-                                        : theme === "light"
-                                        ? "#9495A5"
-                                        : "#767992",
-                            }}
+            <Stack
+                minHeight={"300px"}
+                spacing={2}
+                justifyContent={"space-between"}
+                sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}
+            >
+                <Stack>
+                    {viewedList.map((item, index) => (
+                        <Stack
+                            padding={2}
+                            direction={"row"}
+                            alignItems={"center"}
+                            key={index}
+                            sx={{ borderBottom: "1px #979797 solid" }}
                         >
-                            {item.title}
-                        </Typography>
-                    </Stack>
-                ))}
+                            <Box display={"flex"} alignItems={"center"}>
+                                <Checkbox
+                                    icon={
+                                        <RadioButtonUncheckedIcon
+                                            sx={{
+                                                color: theme === "light" ? "#E3E4F1" : "#393A4B",
+                                            }}
+                                        />
+                                    }
+                                    checkedIcon={<CheckCircleOutlineIcon />}
+                                    checked={item.completed}
+                                    onChange={() => handleOnChange(index)}
+                                />
+                            </Box>
+
+                            <Typography
+                                variant={"body"}
+                                sx={{
+                                    textDecoration: item.completed ? "line-through" : "none",
+                                    fontFamily: "Josefin Sans",
+                                    fontSize: 18,
+                                    color:
+                                        item.completed && theme === "dark"
+                                            ? "#4D5067"
+                                            : theme === "light"
+                                            ? "#9495A5"
+                                            : "#767992",
+                                }}
+                            >
+                                {item.title}
+                            </Typography>
+                        </Stack>
+                    ))}
+                </Stack>
                 <Stack
                     direction="row"
-                    padding={1}
+                    padding={2}
                     alignItems={"center"}
                     justifyContent={"space-between"}
                 >

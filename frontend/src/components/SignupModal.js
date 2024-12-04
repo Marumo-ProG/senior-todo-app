@@ -8,17 +8,17 @@ import Typography from "@mui/material/Typography";
 // React Hook forms
 import { useForm, Controller } from "react-hook-form";
 
-const LoginModal = ({ open, handleClose }) => {
+const SignupModal = ({ open, handleClose }) => {
     const { control, handleSubmit } = useForm();
 
-    const handleLogin = (data) => {
+    const handleSignup = (data) => {
         console.log(data);
     };
     return (
         <Dialog
             open={open}
             onClose={handleClose}
-            title="Login"
+            title="Signup"
             fullWidth="md"
             sx={{
                 "& .MuiPaper-root": {
@@ -26,13 +26,27 @@ const LoginModal = ({ open, handleClose }) => {
                 },
             }}
         >
-            <form onSubmit={handleSubmit(handleLogin)}>
+            <form onSubmit={handleSubmit(handleSignup)}>
                 <Stack spacing={3}>
                     <Typography variant="h4" sx={{ textAlign: "center" }}>
-                        Login
+                        Signup
                     </Typography>
 
                     <Stack spacing={2}>
+                        <Controller
+                            name="username"
+                            control={control}
+                            defaultValue=""
+                            render={({ field, fieldState: { error } }) => (
+                                <TextField
+                                    {...field}
+                                    label="Username"
+                                    fullWidth
+                                    error={!!error}
+                                    helperText={error ? error.message : null}
+                                />
+                            )}
+                        />
                         <Controller
                             name="email"
                             control={control}
@@ -41,7 +55,7 @@ const LoginModal = ({ open, handleClose }) => {
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
                                     {...field}
-                                    label="Email"
+                                    label="Email *"
                                     type="email"
                                     fullWidth
                                     error={!!error}
@@ -57,7 +71,7 @@ const LoginModal = ({ open, handleClose }) => {
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
                                     {...field}
-                                    label="Password"
+                                    label="Password *"
                                     type="password"
                                     helperText={error ? error.message : null}
                                     error={!!error}
@@ -80,4 +94,4 @@ const LoginModal = ({ open, handleClose }) => {
     );
 };
 
-export default LoginModal;
+export default SignupModal;
