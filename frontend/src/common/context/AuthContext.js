@@ -1,6 +1,6 @@
 // This is the authentication module that will be used to authenticate the user.
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 // services
 import UserService from "../services/user.service";
@@ -8,10 +8,21 @@ import UserService from "../services/user.service";
 // Create a context with a default value of "light"
 const AuthContext = createContext(null);
 
+const LOCAL_STORAGE_KEY = "senior-todo-user-token";
+
 // Create a AuthProvider component that wraps its children in the AuthContext.Provider
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    // using the useEffect hook to check if the user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+        if (token) {
+            // retrieve user todo's from todo service
+        }
+    }, []);
 
     // user functions
     const signup = async (user) => {
@@ -40,6 +51,7 @@ const AuthProvider = ({ children }) => {
             alert("Login successful");
 
             // store the token in the local storage
+            localStorage.setItem(LOCAL_STORAGE_KEY, response.token);
 
             // retrieve user todo's from todo service
         }
