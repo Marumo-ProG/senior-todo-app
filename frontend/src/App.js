@@ -34,7 +34,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 function App() {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { theme, setTheme } = useContext(ThemeContext);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openSignupModal, setOpenSignupModal] = useState(false);
@@ -142,6 +142,7 @@ function App() {
                                     variant="contained"
                                     color="secondary"
                                     sx={{ textTransform: "none" }}
+                                    onClick={logout}
                                 >
                                     Logout
                                 </Button>

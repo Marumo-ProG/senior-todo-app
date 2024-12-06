@@ -37,9 +37,28 @@ const signup = async (user) => {
     }
 };
 
+const getUserDetails = async (token) => {
+    try {
+        const response = await api.get("/user", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return {
+            status: 200,
+            data: response.data,
+        };
+    } catch (error) {
+        return {
+            status: error.response?.status,
+        };
+    }
+};
+
 const UserService = {
     login,
     signup,
+    getUserDetails,
 };
 
 export default UserService;

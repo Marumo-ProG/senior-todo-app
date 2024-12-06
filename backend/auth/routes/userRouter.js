@@ -74,6 +74,21 @@ UserRouter.post("/login", async (req, res) => {
     }
 });
 
+// get user details
+UserRouter.get("/", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Token is missing" });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findOne({ email: decoded.email });
+        return res.json({ user });
+    } catch (error) {
+        console.log(error);
+        res.status(403).json({ message: "Invalid or expired token" });
+    }
+});
+
 // User update
 UserRouter.put("/:id", async (req, res) => {
     try {

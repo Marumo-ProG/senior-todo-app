@@ -8,7 +8,7 @@ import UserService from "../services/user.service";
 // Create a context with a default value of "light"
 const AuthContext = createContext(null);
 
-const LOCAL_STORAGE_KEY = "senior-todo-user-token";
+const LOCAL_STORAGE_KEY_TOKEN = "senior-todo-user-token";
 
 // Create a AuthProvider component that wraps its children in the AuthContext.Provider
 const AuthProvider = ({ children }) => {
@@ -17,12 +17,21 @@ const AuthProvider = ({ children }) => {
 
     // using the useEffect hook to check if the user is already logged in
     useEffect(() => {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEY);
+        const token = localStorage.getItem(LOCAL_STORAGE_KEY_TOKEN);
 
         if (token) {
-            // retrieve user todo's from todo service
+            // get the username and password from the token
+            fetchUserDetails(token);
         }
     }, []);
+
+    const fetchUserDetails = async (token) => {
+        const { status, data } = await UserService.getUserDetails(token);
+
+        if (status === 200) {
+            setUser(data.user);
+        }
+    };
 
     // user functions
     const signup = async (user) => {
@@ -51,7 +60,7 @@ const AuthProvider = ({ children }) => {
             alert("Login successful");
 
             // store the token in the local storage
-            localStorage.setItem(LOCAL_STORAGE_KEY, response.token);
+            localStorage.setItem(LOCAL_STORAGE_KEY_TOKEN, response.token);
 
             // retrieve user todo's from todo service
         }
@@ -64,6 +73,7 @@ const AuthProvider = ({ children }) => {
         setUser(null);
 
         // remove the token from the local storage
+        localStorage.removeItem(LOCAL_STORAGE_KEY_TOKEN);
 
         // remove the user todo's from the local storage
     };
