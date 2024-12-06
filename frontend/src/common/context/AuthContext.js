@@ -1,23 +1,84 @@
 // This is the authentication module that will be used to authenticate the user.
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+
+// services
+import UserService from "../services/user.service";
 
 // Create a context with a default value of "light"
 const AuthContext = createContext(null);
 
+const LOCAL_STORAGE_KEY_TOKEN = "senior-todo-user-token";
+
 // Create a AuthProvider component that wraps its children in the AuthContext.Provider
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    // using the useEffect hook to check if the user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEY_TOKEN);
+
+        if (token) {
+            // get the username and password from the token
+            fetchUserDetails(token);
+        }
+    }, []);
+
+    const fetchUserDetails = async (token) => {
+        const { status, data } = await UserService.getUserDetails(token);
+
+        if (status === 200) {
+            setUser(data.user);
+        }
+    };
 
     // user functions
-    const signup = (user) => {
-        setUser(user);
+    const signup = async (user) => {
+        setLoading(true);
+        const response = await UserService.signup(user);
+
+        if (response.status === 201) {
+            setUser(response.user);
+            alert("Signup successful");
+
+            // store the token in the local storage
+            localStorage.setItem(LOCAL_STORAGE_KEY_TOKEN, response.token);
+
+            // retrieve user todo's from todo service
+        } else {
+            alert("Signup failed, user already exists, try again");
+        }
+
+        setLoading(false);
+
+        return response.status;
     };
-    const login = (user) => {
-        setUser(user);
+    const login = async (user) => {
+        setLoading(true);
+        const response = await UserService.login(user.email, user.password);
+
+        if (response.status === 200) {
+            setUser(response.user);
+            alert("Login successful");
+
+            // store the token in the local storage
+            localStorage.setItem(LOCAL_STORAGE_KEY_TOKEN, response.token);
+
+            // retrieve user todo's from todo service
+        }
+
+        setLoading(false);
+
+        return response.status;
     };
     const logout = () => {
         setUser(null);
+
+        // remove the token from the local storage
+        localStorage.removeItem(LOCAL_STORAGE_KEY_TOKEN);
+
+        // remove the user todo's from the local storage
     };
 
     return (
@@ -27,6 +88,8 @@ const AuthProvider = ({ children }) => {
                 signup,
                 login,
                 logout,
+                loading,
+                token: localStorage.getItem(LOCAL_STORAGE_KEY_TOKEN),
             }}
         >
             {children}
