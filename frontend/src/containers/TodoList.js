@@ -13,7 +13,10 @@ import Typography from "../components/Typography";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
-const TodoList = ({ list, handleOnChange, theme, handleClearCompleted }) => {
+// Loaders
+import CircularProgress from "@mui/material/CircularProgress";
+
+const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTodos }) => {
     const [viewedList, setViewedList] = useState(list);
     const [filter, setFilter] = useState("all");
 
@@ -46,134 +49,149 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted }) => {
             elevation={4}
             sx={{ padding: 0, overflow: "hidden" }}
         >
-            <Stack
-                minHeight={"300px"}
-                spacing={2}
-                justifyContent={"space-between"}
-                sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}
-            >
-                <Stack>
-                    {viewedList.length > 0 ? (
-                        viewedList.map((item, index) => (
-                            <Stack
-                                padding={2}
-                                direction={"row"}
-                                alignItems={"center"}
-                                key={index}
-                                sx={{ borderBottom: "1px #979797 solid" }}
-                            >
-                                <Box display={"flex"} alignItems={"center"}>
-                                    <Checkbox
-                                        icon={
-                                            <RadioButtonUncheckedIcon
-                                                sx={{
-                                                    color:
-                                                        theme === "light" ? "#E3E4F1" : "#393A4B",
-                                                }}
-                                            />
-                                        }
-                                        checkedIcon={<CheckCircleOutlineIcon />}
-                                        checked={item.completed}
-                                        onChange={() => handleOnChange(index)}
-                                    />
-                                </Box>
+            {loadingTodos ? (
+                <Stack
+                    height="100%"
+                    minHeight={"300px"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                >
+                    <CircularProgress size={40} />
+                </Stack>
+            ) : (
+                <Stack
+                    minHeight={"300px"}
+                    spacing={2}
+                    justifyContent={"space-between"}
+                    sx={{ backgroundColor: theme === "light" ? "white" : "#25273D" }}
+                >
+                    <Stack>
+                        {viewedList.length > 0 ? (
+                            viewedList.map((item, index) => (
+                                <Stack
+                                    padding={2}
+                                    direction={"row"}
+                                    alignItems={"center"}
+                                    key={index}
+                                    sx={{ borderBottom: "1px #979797 solid" }}
+                                >
+                                    <Box display={"flex"} alignItems={"center"}>
+                                        <Checkbox
+                                            icon={
+                                                <RadioButtonUncheckedIcon
+                                                    sx={{
+                                                        color:
+                                                            theme === "light"
+                                                                ? "#E3E4F1"
+                                                                : "#393A4B",
+                                                    }}
+                                                />
+                                            }
+                                            checkedIcon={<CheckCircleOutlineIcon />}
+                                            checked={item.completed}
+                                            onChange={() => handleOnChange(index)}
+                                        />
+                                    </Box>
 
+                                    <Typography
+                                        variant={"body"}
+                                        sx={{
+                                            textDecoration: item.completed
+                                                ? "line-through"
+                                                : "none",
+                                            fontFamily: "Josefin Sans",
+                                            fontSize: 18,
+                                            color:
+                                                item.completed && theme === "dark"
+                                                    ? "#4D5067"
+                                                    : theme === "light"
+                                                    ? "#9495A5"
+                                                    : "#767992",
+                                        }}
+                                    >
+                                        {item.title}
+                                    </Typography>
+                                </Stack>
+                            ))
+                        ) : (
+                            <Stack padding={2}>
+                                <Typography
+                                    variant={"body"}
+                                    sx={{ fontSize: 14, color: "#9495A5", textAlign: "center" }}
+                                >
+                                    No items
+                                </Typography>
+                            </Stack>
+                        )}
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        padding={2}
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                    >
+                        <Typography
+                            variant={"body"}
+                            sx={{
+                                fontSize: 14,
+                                color: "#9495A5",
+                                fontFamily: "Josefin sans",
+                            }}
+                        >
+                            {list.filter((item) => !item.completed).length} items left
+                        </Typography>
+                        <Stack direction="row" spacing={3} alignItems={"center"}>
+                            <Box sx={{ cursor: "pointer" }} onClick={handleDisplayAll}>
                                 <Typography
                                     variant={"body"}
                                     sx={{
-                                        textDecoration: item.completed ? "line-through" : "none",
-                                        fontFamily: "Josefin Sans",
-                                        fontSize: 18,
-                                        color:
-                                            item.completed && theme === "dark"
-                                                ? "#4D5067"
-                                                : theme === "light"
-                                                ? "#9495A5"
-                                                : "#767992",
+                                        fontSize: 14,
+                                        color: filter === "all" ? "blue" : "#9495A5",
+                                        fontFamily: "Josefin sans",
+                                        fontWeight: "bold",
                                     }}
                                 >
-                                    {item.title}
+                                    All
                                 </Typography>
-                            </Stack>
-                        ))
-                    ) : (
-                        <Stack padding={2}>
-                            <Typography
-                                variant={"body"}
-                                sx={{ fontSize: 14, color: "#9495A5", textAlign: "center" }}
-                            >
-                                No items
-                            </Typography>
+                            </Box>
+                            <Box sx={{ cursor: "pointer" }} onClick={handleDisplayActive}>
+                                <Typography
+                                    variant={"body"}
+                                    sx={{
+                                        fontSize: 14,
+                                        color: filter === "active" ? "blue" : "#9495A5",
+                                        fontFamily: "Josefin sans",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Active
+                                </Typography>
+                            </Box>
+                            <Box sx={{ cursor: "pointer" }} onClick={handleDisplayCompleted}>
+                                <Typography
+                                    variant={"body"}
+                                    sx={{
+                                        fontSize: 14,
+                                        color: filter === "completed" ? "blue" : "#9495A5",
+                                        fontFamily: "Josefin sans",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Completed
+                                </Typography>
+                            </Box>
                         </Stack>
-                    )}
-                </Stack>
-                <Stack
-                    direction="row"
-                    padding={2}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                >
-                    <Typography
-                        variant={"body"}
-                        sx={{
-                            fontSize: 14,
-                            color: "#9495A5",
-                            fontFamily: "Josefin sans",
-                        }}
-                    >
-                        {list.filter((item) => !item.completed).length} items left
-                    </Typography>
-                    <Stack direction="row" spacing={3} alignItems={"center"}>
-                        <Box sx={{ cursor: "pointer" }} onClick={handleDisplayAll}>
+                        <Box sx={{ cursor: "pointer" }} onClick={handleClearCompleted}>
                             <Typography
                                 variant={"body"}
-                                sx={{
-                                    fontSize: 14,
-                                    color: filter === "all" ? "blue" : "#9495A5",
-                                    fontFamily: "Josefin sans",
-                                    fontWeight: "bold",
-                                }}
+                                sx={{ fontSize: 14, color: "#9495A5", fontFamily: "Josefin Sans" }}
                             >
-                                All
-                            </Typography>
-                        </Box>
-                        <Box sx={{ cursor: "pointer" }} onClick={handleDisplayActive}>
-                            <Typography
-                                variant={"body"}
-                                sx={{
-                                    fontSize: 14,
-                                    color: filter === "active" ? "blue" : "#9495A5",
-                                    fontFamily: "Josefin sans",
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                Active
-                            </Typography>
-                        </Box>
-                        <Box sx={{ cursor: "pointer" }} onClick={handleDisplayCompleted}>
-                            <Typography
-                                variant={"body"}
-                                sx={{
-                                    fontSize: 14,
-                                    color: filter === "completed" ? "blue" : "#9495A5",
-                                    fontFamily: "Josefin sans",
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                Completed
+                                Clear Completed
                             </Typography>
                         </Box>
                     </Stack>
-                    <Box sx={{ cursor: "pointer" }} onClick={handleClearCompleted}>
-                        <Typography
-                            variant={"body"}
-                            sx={{ fontSize: 14, color: "#9495A5", fontFamily: "Josefin Sans" }}
-                        >
-                            Clear Completed
-                        </Typography>
-                    </Box>
                 </Stack>
-            </Stack>
+            )}
         </Paper>
     );
 };

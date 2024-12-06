@@ -1,10 +1,13 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 
 // Context
 import { ThemeContext } from "./common/context/ThemeProvider";
 
 // Auth
 import { useAuth } from "./common/context/AuthContext";
+
+// Services
+import todoService from "./common/services/todo.service";
 
 // MUI
 import Stack from "@mui/material/Stack";
@@ -34,36 +37,75 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 function App() {
-    const { user, logout } = useAuth();
+    const { user, logout, token } = useAuth();
     const { theme, setTheme } = useContext(ThemeContext);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openSignupModal, setOpenSignupModal] = useState(false);
+    const [loadingTodos, setLoadingTodos] = useState(false);
 
-    const [list, setList] = useState([
-        { title: "Task 1", completed: false },
-        { title: "Task 2", completed: true },
-        { title: "Task 3", completed: false },
-    ]);
+    const [list, setList] = useState([]);
     const [inputTask, setInputTask] = useState({ title: "", completed: false });
+
+    useEffect(() => {
+        if (user) {
+            fetchTodos();
+        }
+    }, [user]);
+
+    const fetchTodos = async () => {
+        setLoadingTodos(true);
+        const response = await todoService.getAllTodos(token);
+        if (response.status === 200) {
+            setList(response.data.todos);
+        }
+        setLoadingTodos(false);
+    };
 
     const handleSetTheme = () => {
         setTheme(theme === "light" ? "dark" : "light");
     };
 
     const handleOnChange = (index) => {
-        setList((prevList) => {
-            const newList = [...prevList];
-            newList[index].completed = !newList[index].completed;
-            return newList;
-        });
+        if (user) {
+            const { status } = todoService.completeTodo(token, list[index]._id);
+            if (status === 200) {
+                setList((prevList) => {
+                    const newList = [...prevList];
+                    newList[index].completed = !newList[index].completed;
+                    return newList;
+                });
+            }
+        } else {
+            setList((prevList) => {
+                const newList = [...prevList];
+                newList[index].completed = !newList[index].completed;
+                return newList;
+            });
+        }
     };
     const handleAddTask = (event) => {
         if (event.key !== "Enter") return;
-        setList((prevList) => [...prevList, inputTask]);
-        setInputTask({ title: "", completed: false });
+        if (user) {
+            const { status, data } = todoService.createTodo(token, inputTask);
+            if (status === 201) {
+                setList((prevList) => [...prevList, data.todo]);
+                setInputTask({ title: "", completed: false });
+            }
+        } else {
+            setList((prevList) => [...prevList, inputTask]);
+            setInputTask({ title: "", completed: false });
+        }
     };
     const handleClearCompleted = () => {
-        setList((prevList) => prevList.filter((item) => !item.completed));
+        if (user) {
+            const { status } = todoService.clearCompletedTodos(token);
+            if (status === 200) {
+                alert("All completed tasks have been cleared");
+                setList((prevList) => prevList.filter((item) => !item.completed));
+            }
+        } else {
+            setList((prevList) => prevList.filter((item) => !item.completed));
+        }
     };
 
     return (
@@ -238,6 +280,7 @@ function App() {
                                 handleOnChange={handleOnChange}
                                 theme={theme}
                                 handleClearCompleted={handleClearCompleted}
+                                loadingTodos={loadingTodos}
                             />
                         </Stack>
                         <Typography

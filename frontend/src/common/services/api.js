@@ -1,7 +1,11 @@
 import axios from "axios";
 
-const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+const user_api = axios.create({
+    baseURL: process.env.REACT_APP_USER_API_URL,
 });
 
-export default api;
+const todo_api = axios.create({
+    baseURL: process.env.REACT_APP_TODO_API_URL,
+});
+
+export { user_api, todo_api };

@@ -89,6 +89,7 @@ const AuthProvider = ({ children }) => {
                 login,
                 logout,
                 loading,
+                token: localStorage.getItem(LOCAL_STORAGE_KEY_TOKEN),
             }}
         >
             {children}

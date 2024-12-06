@@ -1,10 +1,10 @@
 // user service for login and user creation
 
-import api from "./api";
+import { user_api } from "./api";
 
 const login = async (email, password) => {
     try {
-        const response = await api.post("/user/login", {
+        const response = await user_api.post("/user/login", {
             email,
             password,
         });
@@ -23,7 +23,7 @@ const login = async (email, password) => {
 
 const signup = async (user) => {
     try {
-        const response = await api.post("/user/create", user);
+        const response = await user_api.post("/user/create", user);
         return {
             status: 201,
             user: response.data.user,
@@ -39,7 +39,7 @@ const signup = async (user) => {
 
 const getUserDetails = async (token) => {
     try {
-        const response = await api.get("/user", {
+        const response = await user_api.get("/user", {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
