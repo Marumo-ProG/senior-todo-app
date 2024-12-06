@@ -22,8 +22,8 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTo
 
     useEffect(() => {
         if (filter === "all") return setViewedList(list);
-        if (filter === "active") return setViewedList(list.filter((item) => !item.completed));
-        if (filter === "completed") return setViewedList(list.filter((item) => item.completed));
+        if (filter === "active") return setViewedList(list.filter((item) => !item.complete));
+        if (filter === "completed") return setViewedList(list.filter((item) => item.complete));
     }, [list]);
 
     const handleDisplayAll = () => {
@@ -34,12 +34,12 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTo
     const handleDisplayActive = () => {
         if (filter === "active") return;
         setFilter("active");
-        setViewedList(list.filter((item) => !item.completed));
+        setViewedList(list.filter((item) => !item.complete));
     };
     const handleDisplayCompleted = () => {
         if (filter === "completed") return;
         setFilter("completed");
-        setViewedList(list.filter((item) => item.completed));
+        setViewedList(list.filter((item) => item.complete));
     };
 
     return (
@@ -88,7 +88,7 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTo
                                                 />
                                             }
                                             checkedIcon={<CheckCircleOutlineIcon />}
-                                            checked={item.completed}
+                                            checked={item.complete}
                                             onChange={() => handleOnChange(index)}
                                         />
                                     </Box>
@@ -96,13 +96,11 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTo
                                     <Typography
                                         variant={"body"}
                                         sx={{
-                                            textDecoration: item.completed
-                                                ? "line-through"
-                                                : "none",
+                                            textDecoration: item.complete ? "line-through" : "none",
                                             fontFamily: "Josefin Sans",
                                             fontSize: 18,
                                             color:
-                                                item.completed && theme === "dark"
+                                                item.complete && theme === "dark"
                                                     ? "#4D5067"
                                                     : theme === "light"
                                                     ? "#9495A5"
@@ -138,7 +136,7 @@ const TodoList = ({ list, handleOnChange, theme, handleClearCompleted, loadingTo
                                 fontFamily: "Josefin sans",
                             }}
                         >
-                            {list.filter((item) => !item.completed).length} items left
+                            {list.filter((item) => !item.complete).length} items left
                         </Typography>
                         <Stack direction="row" spacing={3} alignItems={"center"}>
                             <Box sx={{ cursor: "pointer" }} onClick={handleDisplayAll}>

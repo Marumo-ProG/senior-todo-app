@@ -43,7 +43,7 @@ const completeTodo = async (token, id) => {
     try {
         const response = await todo_api.post(
             "/todos/complete",
-            { id },
+            { id: id },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

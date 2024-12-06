@@ -65,46 +65,52 @@ function App() {
         setTheme(theme === "light" ? "dark" : "light");
     };
 
-    const handleOnChange = (index) => {
+    const handleOnChange = async (index) => {
         if (user) {
-            const { status } = todoService.completeTodo(token, list[index]._id);
-            if (status === 200) {
-                setList((prevList) => {
-                    const newList = [...prevList];
-                    newList[index].completed = !newList[index].completed;
-                    return newList;
-                });
+            if (list[index].complete) {
+                const { status } = await todoService.incompleteTodo(token, list[index]._id);
+                if (status === 200) {
+                    fetchTodos();
+                }
+            } else {
+                const { status } = await todoService.completeTodo(token, list[index]._id);
+                if (status === 200) {
+                    fetchTodos();
+                }
             }
         } else {
             setList((prevList) => {
                 const newList = [...prevList];
-                newList[index].completed = !newList[index].completed;
+                newList[index].complete = !newList[index].complete;
                 return newList;
             });
         }
     };
-    const handleAddTask = (event) => {
+    const handleAddTask = async (event) => {
         if (event.key !== "Enter") return;
         if (user) {
-            const { status, data } = todoService.createTodo(token, inputTask);
+            const { status, data } = await todoService.createTodo(token, {
+                title: inputTask.title,
+                complete: inputTask.complete,
+            });
             if (status === 201) {
-                setList((prevList) => [...prevList, data.todo]);
-                setInputTask({ title: "", completed: false });
+                fetchTodos();
+                setInputTask({ title: "", complete: false });
             }
         } else {
             setList((prevList) => [...prevList, inputTask]);
-            setInputTask({ title: "", completed: false });
+            setInputTask({ title: "", complete: false });
         }
     };
-    const handleClearCompleted = () => {
+    const handleClearCompleted = async () => {
         if (user) {
-            const { status } = todoService.clearCompletedTodos(token);
+            const { status } = await todoService.clearCompletedTodos(token);
             if (status === 200) {
                 alert("All completed tasks have been cleared");
-                setList((prevList) => prevList.filter((item) => !item.completed));
+                fetchTodos();
             }
         } else {
-            setList((prevList) => prevList.filter((item) => !item.completed));
+            setList((prevList) => prevList.filter((item) => !item.complete));
         }
     };
 
@@ -248,7 +254,7 @@ function App() {
                                                 />
                                             }
                                             checkedIcon={<CheckCircleOutlineIcon />}
-                                            checked={inputTask.completed}
+                                            checked={inputTask.complete}
                                         />
                                     </Box>
                                     <TextField
@@ -258,7 +264,7 @@ function App() {
                                         onChange={(e) =>
                                             setInputTask({
                                                 title: e.target.value,
-                                                completed: false,
+                                                complete: false,
                                             })
                                         }
                                         sx={{
