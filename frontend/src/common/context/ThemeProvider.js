@@ -18,7 +18,7 @@ const ThemeProvider = ({ children }) => {
         if (user) {
             setTheme(user.theme);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         if (user) {
@@ -26,7 +26,6 @@ const ThemeProvider = ({ children }) => {
         } else {
             // if user not loggled in store in localstorage
             localStorage.setItem(LOCAL_STORAGE_KEY, theme);
-            console.log("Theme stored in localstorage");
         }
     }, [theme]);
 

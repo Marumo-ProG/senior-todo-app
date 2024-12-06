@@ -38,11 +38,12 @@ const AuthProvider = ({ children }) => {
         setLoading(true);
         const response = await UserService.signup(user);
 
-        if (response.status === "success") {
+        if (response.status === 201) {
             setUser(response.user);
             alert("Signup successful");
 
             // store the token in the local storage
+            localStorage.setItem(LOCAL_STORAGE_KEY_TOKEN, response.token);
 
             // retrieve user todo's from todo service
         } else {
@@ -50,6 +51,8 @@ const AuthProvider = ({ children }) => {
         }
 
         setLoading(false);
+
+        return response.status;
     };
     const login = async (user) => {
         setLoading(true);
