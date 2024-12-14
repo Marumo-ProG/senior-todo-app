@@ -22,12 +22,12 @@ import Button from "@mui/material/Button";
 // Icons
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const S3_BUCKET = "senior-todo-app-bucket";
-const REGION = "us-east-1";
+const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+const REGION = process.env.REACT_APP_AWS_REGION;
 
 AWS.config.update({
-    accessKeyId: "AKIAVJ5UAFXXGLOJ7D7C",
-    secretAccessKey: "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",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
 });
 
 const myBucket = new AWS.S3({
