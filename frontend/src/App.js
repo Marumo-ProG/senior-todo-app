@@ -203,7 +203,13 @@ function App() {
 
                     <CardMedia
                         component="img"
-                        image={theme === "light" ? DefaultbackgroundImage : DarkBackground}
+                        image={
+                            user?.profilePicture
+                                ? user?.profilePicture
+                                : theme === "light"
+                                ? DefaultbackgroundImage
+                                : DarkBackground
+                        }
                         alt="Default background"
                         sx={{
                             width: "100%",

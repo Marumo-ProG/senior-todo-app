@@ -9,6 +9,7 @@ import Cardmedia from "@mui/material/CardMedia";
 
 // Services
 import AWS from "aws-sdk";
+import imageUploadService from "../common/services/imageUpload.service";
 
 // Context
 import { useAuth } from "../common/context/AuthContext";
@@ -35,9 +36,12 @@ const myBucket = new AWS.S3({
 });
 
 const ImageUploadModal = ({ open, handleClose }) => {
+    const { user, token } = useAuth();
     const [image, setImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
     const [progress, setProgress] = useState(0);
+
+    const { updateProfilePicture } = imageUploadService;
 
     const handleImageChange = (file) => {
         setPreviewImage(file);
@@ -67,10 +71,28 @@ const ImageUploadModal = ({ open, handleClose }) => {
             .on("httpUploadProgress", (evt) => {
                 setProgress(Math.round((evt.loaded / evt.total) * 100));
             })
-            .send((err) => {
+            .send(async (err) => {
                 if (err) console.log("Error uploading:", err);
-                else console.log("Upload successful!");
+                else {
+                    // updating the theme image in the user database
+                    const imageUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
+
+                    const { status } = await updateProfilePicture(token, imageUrl);
+                    if (status === 200) {
+                        handleClose();
+                    } else {
+                        alert("Error updating user image details in the database");
+                    }
+                }
             });
+    };
+    const handleRemoveImage = async () => {
+        const { status } = await updateProfilePicture(token, "");
+        if (status === 200) {
+            handleClose();
+        } else {
+            alert("Error updating user image details in the database");
+        }
     };
     return (
         <Dialog
@@ -95,7 +117,7 @@ const ImageUploadModal = ({ open, handleClose }) => {
                             type="file"
                             onChange={(e) => handleImageChange(e.target.files[0])}
                         />
-                        {previewImage && (
+                        {(previewImage || user?.profilePicture) && (
                             <Box
                                 sx={{
                                     width: 200,
@@ -107,7 +129,11 @@ const ImageUploadModal = ({ open, handleClose }) => {
                                 <Cardmedia
                                     component="img"
                                     height="100%"
-                                    image={URL.createObjectURL(previewImage)}
+                                    image={
+                                        previewImage
+                                            ? URL.createObjectURL(previewImage)
+                                            : user?.profilePicture
+                                    }
                                     sx={{
                                         width: "100%",
                                         height: "auto",
@@ -117,9 +143,16 @@ const ImageUploadModal = ({ open, handleClose }) => {
                             </Box>
                         )}
 
-                        <Button variant="contained" color="primary" type="submit">
-                            Upload Image
-                        </Button>
+                        {previewImage && (
+                            <Button variant="contained" color="primary" type="submit">
+                                Upload Image
+                            </Button>
+                        )}
+                        {user?.profilePicture && (
+                            <Button variant="contained" color="primary" onClick={handleRemoveImage}>
+                                Remove Backgoround Image
+                            </Button>
+                        )}
                         {progress > 0 && (
                             <Typography variant="body1" sx={{ textAlign: "center" }}>
                                 Progress: {progress}%

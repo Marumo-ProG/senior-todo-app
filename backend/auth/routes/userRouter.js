@@ -90,18 +90,23 @@ UserRouter.get("/", async (req, res) => {
 });
 
 // User update
-UserRouter.put("/:id", async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
+UserRouter.put("/", async (req, res) => {
+    // authorize token recieved from the client
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Token is missing" });
 
-        if (user.username === req.body.username) {
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-            });
-            res.status(200).json(updatedUser);
-        }
-    } catch (err) {
-        res.status(500).json(err);
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findOne({ email: decoded.email });
+
+        // updating the profile picture only
+        user.profilePicture = req.body.profilePicture;
+
+        const updatedUser = await user.save();
+        return res.status(200).json({ user: updatedUser });
+    } catch (error) {
+        console.log(error);
+        res.status(403).json({ message: "Invalid or expired token" });
     }
 });
 
