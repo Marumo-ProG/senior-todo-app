@@ -57,7 +57,7 @@ const ImageUploadModal = ({ open, handleClose }) => {
 
     const uploadToS3 = async (file) => {
         const params = {
-            ACL: "public-read",
+            // ACL: "public-read",
             Body: file.content,
             Bucket: S3_BUCKET,
             Key: file.name,
