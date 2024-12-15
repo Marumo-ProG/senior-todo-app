@@ -24,6 +24,7 @@ import Paper from "@mui/material/Paper";
 import TodoList from "./containers/TodoList";
 import LoginModal from "./components/LoginModal";
 import SignupModal from "./components/SignupModal";
+import ImageUploadModal from "./components/ImageUploadModal";
 
 // Images
 import DefaultbackgroundImage from "./assets/images/default_background.jpg";
@@ -45,6 +46,7 @@ function App() {
 
     const [list, setList] = useState([]);
     const [inputTask, setInputTask] = useState({ title: "", completed: false });
+    const [openImageUploadModal, setOpenImageUploadModal] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -152,6 +154,7 @@ function App() {
                         <Button
                             startIcon={<UploadFileIcon />}
                             variant="contained"
+                            onClick={() => setOpenImageUploadModal(true)}
                             sx={{
                                 background: "white",
                                 color: "blue",
@@ -200,7 +203,13 @@ function App() {
 
                     <CardMedia
                         component="img"
-                        image={theme === "light" ? DefaultbackgroundImage : DarkBackground}
+                        image={
+                            user?.profilePicture
+                                ? user?.profilePicture
+                                : theme === "light"
+                                ? DefaultbackgroundImage
+                                : DarkBackground
+                        }
                         alt="Default background"
                         sx={{
                             width: "100%",
@@ -304,6 +313,10 @@ function App() {
             </Stack>
             <LoginModal open={openLoginModal} handleClose={() => setOpenLoginModal(false)} />
             <SignupModal open={openSignupModal} handleClose={() => setOpenSignupModal(false)} />
+            <ImageUploadModal
+                open={openImageUploadModal}
+                handleClose={() => setOpenImageUploadModal(false)}
+            />
         </>
     );
 }
