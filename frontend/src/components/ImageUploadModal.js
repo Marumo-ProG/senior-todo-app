@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // react upload image
 
@@ -6,10 +6,6 @@ import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Cardmedia from "@mui/material/CardMedia";
-
-// Services
-import AWS from "aws-sdk";
-import imageUploadService from "../common/services/imageUpload.service";
 
 // Context
 import { useAuth } from "../common/context/AuthContext";
@@ -22,26 +18,10 @@ import Button from "@mui/material/Button";
 // Icons
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
-const REGION = process.env.REACT_APP_AWS_REGION;
-
-AWS.config.update({
-    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
-    secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
-});
-
-const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET },
-    region: REGION,
-});
-
 const ImageUploadModal = ({ open, handleClose }) => {
-    const { user, token } = useAuth();
+    const { user, uploadToS3, progress, handleRemoveImage } = useAuth();
     const [image, setImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [progress, setProgress] = useState(0);
-
-    const { updateProfilePicture } = imageUploadService;
 
     const handleImageChange = (file) => {
         setPreviewImage(file);
@@ -59,66 +39,6 @@ const ImageUploadModal = ({ open, handleClose }) => {
         }
     };
 
-    const uploadToS3 = async (file) => {
-        const params = {
-            // ACL: "public-read",
-            Body: file.content,
-            Bucket: S3_BUCKET,
-            Key: file.name,
-        };
-        myBucket
-            .putObject(params)
-            .on("httpUploadProgress", (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100));
-            })
-            .send(async (err) => {
-                if (err) console.log("Error uploading:", err);
-                else {
-                    // updating the theme image in the user database
-                    const imageUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
-
-                    const { status } = await updateProfilePicture(token, imageUrl);
-                    if (status === 200) {
-                        handleClose();
-                    } else {
-                        alert("Error updating user image details in the database");
-                    }
-                }
-            });
-    };
-
-    const deleteFileFromS3 = async (fileUrl) => {
-        try {
-            // Parse the file key from the URL
-            const bucketName = "senior-todo-app-bucket";
-            const url = new URL(fileUrl);
-            const fileKey = decodeURIComponent(url.pathname.substring(1)); // Remove leading '/'
-
-            // Delete parameters
-            const params = {
-                Bucket: bucketName,
-                Key: fileKey,
-            };
-
-            // Delete the file
-            await myBucket.deleteObject(params).promise();
-            console.log(`File deleted successfully: ${fileKey}`);
-        } catch (error) {
-            console.error("Error deleting file:", error);
-        }
-    };
-
-    const handleRemoveImage = async () => {
-        const { status } = await updateProfilePicture(token, "");
-        if (status === 200) {
-            await deleteFileFromS3(user?.profilePicture)
-                .then((response) => alert("Image removed successfully"))
-                .catch((error) => alert("Error removing image"));
-            handleClose();
-        } else {
-            alert("Error updating user image details in the database");
-        }
-    };
     return (
         <Dialog
             open={open}
