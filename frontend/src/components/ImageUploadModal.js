@@ -86,9 +86,34 @@ const ImageUploadModal = ({ open, handleClose }) => {
                 }
             });
     };
+
+    const deleteFileFromS3 = async (fileUrl) => {
+        try {
+            // Parse the file key from the URL
+            const bucketName = "senior-todo-app-bucket";
+            const url = new URL(fileUrl);
+            const fileKey = decodeURIComponent(url.pathname.substring(1)); // Remove leading '/'
+
+            // Delete parameters
+            const params = {
+                Bucket: bucketName,
+                Key: fileKey,
+            };
+
+            // Delete the file
+            await myBucket.deleteObject(params).promise();
+            console.log(`File deleted successfully: ${fileKey}`);
+        } catch (error) {
+            console.error("Error deleting file:", error);
+        }
+    };
+
     const handleRemoveImage = async () => {
         const { status } = await updateProfilePicture(token, "");
         if (status === 200) {
+            await deleteFileFromS3(user?.profilePicture)
+                .then((response) => alert("Image removed successfully"))
+                .catch((error) => alert("Error removing image"));
             handleClose();
         } else {
             alert("Error updating user image details in the database");
@@ -144,7 +169,7 @@ const ImageUploadModal = ({ open, handleClose }) => {
                         )}
 
                         {previewImage && (
-                            <Button variant="contained" color="primary" type="submit">
+                            <Button variant="contained" color="primary" onClick={handleFormSubmit}>
                                 Upload Image
                             </Button>
                         )}
